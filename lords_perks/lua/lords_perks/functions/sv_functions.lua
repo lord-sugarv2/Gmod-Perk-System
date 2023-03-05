@@ -27,3 +27,24 @@ hook.Add("PlayerInitialSpawn", "LPerks:PlayerJoined", function(ply)
     ply:SetNWInt("LPerks:XP", LPerks:GetXP(ply:SteamID()))
     ply:SetNWInt("LPerks:Level", LPerks:GetLevel(ply:SteamID()))
 end)
+
+-- Thanks to king_of_the_squirt#0667
+function AddXPCommand(ply, text, teamChat)
+    if not IsValid(ply) or not ply:IsSuperAdmin() then return end
+    local args = string.Split(text, " ")
+    if #args ~= 3 or args[1] ~= "!addxp" then return end
+    local target = nil
+
+    for _, v in ipairs(player.GetAll()) do
+        if v:SteamID() == args[2] or v:Nick() == args[2] then
+            target = v
+            break
+        end
+    end
+
+    if not IsValid(target) then return end
+    local amount = tonumber(args[3]) or 0
+    Perks:AddXP(target:SteamID(), amount)
+end
+
+hook.Add("PlayerSay", "AddXPCommand", AddXPCommand)
